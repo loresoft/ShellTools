@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <PropertyGroup>
+    <BuildConfiguration  Condition=" '$(BuildConfiguration)' == '' ">Release</BuildConfiguration>
+
+    <BuildFolder>$(MSBuildProjectDirectory)\Build</BuildFolder>
+    <ToolFolder>$(MSBuildProjectDirectory)\Tools</ToolFolder>
+    <SourceFolder>$(MSBuildProjectDirectory)\Source</SourceFolder>
+
+    <MSBuildCommunityTasksPath>$(ToolFolder)\MSBuildTasks\tools</MSBuildCommunityTasksPath>
+  </PropertyGroup>
+
+  <Import Project="$(MSBuildCommunityTasksPath)\MSBuild.Community.Tasks.targets"/>
+
+  <PropertyGroup>
+    <BuildNumber Condition=" '$(APPVEYOR_BUILD_NUMBER)' != '' ">$(APPVEYOR_BUILD_NUMBER)</BuildNumber>
+    <BuildNumber Condition=" '$(BUILD_NUMBER)' != '' ">$(BUILD_NUMBER)</BuildNumber>
+    <BuildNumber Condition=" '$(BuildNumber)' == '' ">0</BuildNumber>
+
+    <Major Condition=" '$(Major)' == '' ">1</Major>
+    <Minor Condition=" '$(Minor)' == '' ">0</Minor>
+    <Patch Condition=" '$(Patch)' == '' ">0</Patch>
+
+    <AssemblyVersion>$(Major).$(Minor).0.0</AssemblyVersion>
+    <AssemblyFileVersion>$(Major).$(Minor).$(Patch).$(BuildNumber)</AssemblyFileVersion>
+    <AssemblyInformationalVersion>$(Major).$(Minor).$(Patch).$(BuildNumber)</AssemblyInformationalVersion>
+    <PackageVersion>$(Major).$(Minor).$(Patch).$(BuildNumber)</PackageVersion>
+    <InstallVersion>$(Major).$(Minor).$(BuildNumber)</InstallVersion>
+  </PropertyGroup>
+
+
+  <Target Name="Clean">
+    <DeleteTree Directories="**\obj\**;**\bin\**" />
+    <DeleteTree Directories="$(BuildFolder)" ContinueOnError="true" />
+  </Target>
+
+  <Target Name="Version">
+    <Time>
+      <Output TaskParameter="Year" PropertyName="Year" />
+    </Time>
+
+    <Message Text="Version: $(AssemblyInformationalVersion)"/>
+
+    <AssemblyInfo CodeLanguage="CS"
+                  OutputFile="$(SourceFolder)\ShellTools\Properties\AssemblyInfo.cs"
+                  AssemblyTitle="ShellTools"
+                  AssemblyProduct="ShellTools"
+                  AssemblyDescription="Tools for Windows Shell"
+                  AssemblyCompany="LoreSoft"
+                  AssemblyCopyright="Copyright © $(Year) LoreSoft"
+                  Guid="db20169e-3c64-4649-85e2-9233ad45b474"
+                  ComVisible="false"
+                  CLSCompliant="true"
+                  AssemblyConfiguration="$(BuildConfiguration)"
+                  AssemblyVersion="$(AssemblyVersion)"
+                  AssemblyFileVersion="$(AssemblyFileVersion)"
+                  AssemblyInformationalVersion="$(AssemblyInformationalVersion)"
+                  GenerateClass="true" />
+  </Target>
+
+  <Target Name="Compile" DependsOnTargets="Clean;Version">
+    <MSBuild Projects="$(SourceFolder)\ShellTools.sln"
+             Properties="Configuration=$(BuildConfiguration)"/>
+  </Target>
+  
+  <Target Name="Zip" DependsOnTargets="Compile">
+    <ItemGroup>
+      <ZipFiles Include="$(BuildFolder)\*.*" />
+    </ItemGroup>
+
+    <Zip Files="@(ZipFiles)"
+         WorkingDirectory="$(BuildFolder)"
+         ZipFileName="ShellTools.v$(PackageVersion).zip" />
+  </Target>
+  
+  <Target Name="Pack" DependsOnTargets="Compile">
+    <NuGetPack File="ShellTools.nuspec"
+               OutputDirectory="$(MSBuildProjectDirectory)"
+               Version="$(PackageVersion)" />
+  </Target>
+
+  <Target Name="Build" DependsOnTargets="Zip;Pack"> 
+  </Target>
+
+</Project>

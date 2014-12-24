@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+    <metadata>
+        <id>ShellTools</id>
+        <version>1.0.0.0</version>
+        <title>ShellTools</title>
+        <authors>LoreSoft</authors>
+        <owners>LoreSoft</owners>
+        <licenseUrl>https://github.com/loresoft/ShellTools</licenseUrl>
+        <projectUrl>https://github.com/loresoft/ShellTools</projectUrl>
+        <requireLicenseAcceptance>false</requireLicenseAcceptance>
+        <description>Windows Shell Tools</description>
+        <summary>Windows Shell Tools</summary>
+        <language>en-US</language>
+        <tags>shell sendto</tags>
+    </metadata>
+    <files>
+        <file src="Build\ShellTools.exe" target="tools" />
+        <file src="Build\ShellTools.exe.config" target="tools" />
+        <file src="Tools\ShellTools.exe.ignore" target="tools" />
+        <file src="Tools\chocolateyInstall.ps1" target="tools" />
+    </files>
+</package>
