@@ -184,3 +184,4 @@ FakesAssemblies/
 
 /Build
 /Tools/MSBuildTasks
+/*.zip
