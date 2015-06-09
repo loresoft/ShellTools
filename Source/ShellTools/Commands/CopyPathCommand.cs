@@ -23,7 +23,7 @@ namespace ShellTools.Commands
 
         public override string DisplayName
         {
-            get { return "Copy Path to Clipbard"; }
+            get { return "Copy Path to Clipboard"; }
         }
 
         protected override string GetSendToPath()
